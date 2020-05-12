@@ -9,12 +9,13 @@ use hello_net::ThreadPool;
 fn main() {
     let listener = TcpListener::bind("0.0.0.0:7676").unwrap();
     let pool = ThreadPool::new(10);
-    for stream in listener.incoming() {
+    for stream in listener.incoming().take(2) {
         let stream = stream.unwrap();
         pool.execute(||{
             handle_connection(stream);
         });
     }
+    println!("Shutting down.");
 }
 
 fn handle_connection(mut stream: TcpStream) {
